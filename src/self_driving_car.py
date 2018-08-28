@@ -4,9 +4,15 @@ from picamera import PiCamera
 from time import sleep
 from time import time
 
-# the "train" switch is used to select mode
-# train=1  --> Pi captures image and observes left/right control signals at GPIO - data is written to file
-# train=0  --> Pi captures image and drives left/right control at GPIO (using CNN)
+# Self-driving car for Metrowest Machine Learning Group.
+#
+# This file runs on the Pi. First it collects data 
+# to train the CNN. Later it applies the the
+# trained CNN to the task of driving the car.
+
+# The "train" switch selects mode:
+# train=1  --> Pi captures image and captures left/right control signals at GPIO - data is written to file
+# train=0  --> Pi captures image andi uses CNN to drive left/right control at GPIO
 train = True
 
 pin_left  = 26
