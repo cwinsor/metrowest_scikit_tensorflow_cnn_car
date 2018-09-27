@@ -3,6 +3,7 @@ from gpiozero import OutputDevice
 from picamera import PiCamera
 from time import sleep
 from time import time
+import numpy as np
 
 # Self-driving car for Metrowest Machine Learning Group.
 #
@@ -22,14 +23,16 @@ pin_right = 13
 
 if train == True:
 
+	picturepath = '../data/picturesX'
+
 	pin_l = InputDevice(pin_left,True)
 	pin_r = InputDevice(pin_right,True)
 
 	camera = PiCamera()
-    	camera.resolution = (640, 480)
-    	camera.framerate = 24
+	camera.resolution = (64, 64)
+	#  camera.framerate = 24
 	camera.rotation = 180
-	camera.raw_format='rgb'
+	#  camera.raw_format='rgb'
 	camera.start_preview()
 	sleep(5)
 	camera.stop_preview()
@@ -43,20 +46,26 @@ if train == True:
 		pinvals = str(pLeft) + str(pRigh)
 		print(pinvals)
 		
-		fb = open('/home/pi/tempdir/pictures/control%s' % i, 'a+')
+		fb = open(picturepath + '/control%s' % i, 'a+')
 		fb.write(pinvals) 
 		fb.close()
-		camera.capture('/home/pi/tempdir/pictures/image%s.jpg' % i, use_video_port=True)
+		#  camera.capture(picturepath + '/image%s.jpg' % i, use_video_port=True)
+		#  camera.capture(picturepath + '/image%s.jpg' % i)
+		#  camera.capture(picturepath + '/image%s.jpg' % i, resize=(64, 64))
+		camera.capture(picturepath + '/image%s.jpg' % i, resize=(64, 64), use_video_port=True)
+		#  output = np.empty((64, 64, 3), dtype=np.uint8)
+		#  camera.capture(output, 'rgb', use_video_port=True)
 	
 		i = i + 1
 		
 		b = time()
 		consumed = b - a
-		remaining = loop_target_time - consumed
-		if remaining > 0.0:
-			sleep(remaining)
-		else:
-			print("warning - loop of %f seconds exceeded the target of %f seconds" %(consumed, loop_target_time))
+		print("consumed " + str(consumed))
+		#  remaining = loop_target_time - consumed
+		#  if remaining > 0.0:
+		#		sleep(remaining)
+		# else:
+		#		print("warning - loop of %f seconds exceeded the target of %f seconds" %(consumed, loop_target_time))
 		a = b
 
 if train == False:
