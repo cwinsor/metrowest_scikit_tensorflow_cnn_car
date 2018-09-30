@@ -2,9 +2,6 @@ import pickle
 from keras.datasets import mnist
 from metrowestcar_file_io import FileReader
 
-from os import getcwd
-from os.path import abspath
-from os.path import join
 import numpy as np
 
 
@@ -26,13 +23,7 @@ class DatasetArchitect(object):
         print("The steering array (test)     is a " + str(dataset['steering_test'].shape) + " of " + str(type(dataset['steering_test'][0])))
         return
     
-    def read_raw_data_from_files(self):
-
-        # the original raw data files are in...
-        dir_list = [
-            join(abspath(getcwd()), "../data/picturesX"),
-            join(abspath(getcwd()), "../data/picturesX"),
-        ]
+    def read_raw_data_from_files(self, dir_list):
 
         file_reader = FileReader(64, 64, 3)
         self.image_array = file_reader.read_images_from_list_of_directories(dir_list)
