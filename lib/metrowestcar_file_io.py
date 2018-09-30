@@ -40,11 +40,11 @@ class FileReader(object):
         with open(full_path, 'rt') as file:
             line = file.read()
             if line == "01":
-                steering = np.uint8(2)
-            elif line == "11":
-                steering = np.uint8(0)
-            elif line == "10":
                 steering = np.uint8(1)
+            elif line == "11":
+                steering = np.uint8(3)
+            elif line == "10":
+                steering = np.uint8(2)
             else:
                 sys.exit("error - steering data value of " + line + " is unexpected/invalid" + "file=" + full_path)
         return steering

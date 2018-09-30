@@ -41,7 +41,7 @@ class Displayer():
             pointer = pointer_left
         elif direction == 2:
             pointer = pointer_right
-        elif direction == 0:
+        elif direction == 3:
             pointer = pointer_straight
         else:
             pointer = pointer_box
