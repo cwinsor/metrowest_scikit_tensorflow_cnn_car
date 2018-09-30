@@ -4,6 +4,8 @@ from picamera import PiCamera
 from time import sleep
 from time import time
 import numpy as np
+from datetime import datetime
+import os
 
 # Self-driving car for Metrowest Machine Learning Group.
 #
@@ -19,7 +21,9 @@ import numpy as np
 pin_left  = 26
 pin_right = 13
 
-savepath = '../data/picturesX'
+timestamp = str(datetime.today()).split()
+savepath = '../data_raw/' + timestamp[0] + "-" + timestamp[1]
+os.makedirs(savepath)
 
 pin_l = InputDevice(pin_left,True)
 pin_r = InputDevice(pin_right,True)
@@ -53,9 +57,9 @@ while True:
 	b = time()
 	consumed = b - a
 	print("consumed " + str(consumed))
-	#  remaining = loop_target_time - consumed
-	#  if remaining > 0.0:
-	#		sleep(remaining)
-	# else:
-	#		print("warning - loop of %f seconds exceeded the target of %f seconds" %(consumed, loop_target_time))
+	remaining = loop_target_time - consumed
+	if remaining > 0.0:
+		sleep(remaining)
+	else:
+		print("warning - loop of %f seconds exceeded the target of %f seconds" %(consumed, loop_target_time))
 	a = b
