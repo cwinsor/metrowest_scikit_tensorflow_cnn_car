@@ -38,6 +38,23 @@ pin_right = 13
 pin_l = OutputDevice(pin_left,True,True)
 pin_r = OutputDevice(pin_right,True,True)
 
+print("left")
+pin_l.off()
+pin_r.on()
+sleep(1.0)
+            
+print("right")
+pin_l.on()
+pin_r.off()
+sleep(1.0)
+
+print("center")
+pin_l.on()
+pin_r.on()
+sleep(1.0)
+
+
+
 with picamera.PiCamera() as camera:
 
     print("camera preview start")
@@ -70,6 +87,7 @@ with picamera.PiCamera() as camera:
         s_max = np.where(steering_out==steering_out.max())
         s_index = s_max[0][0]
 
+    
         # apply to GPIOs
         if s_index == 1:
             print("left")
@@ -84,11 +102,11 @@ with picamera.PiCamera() as camera:
             pin_l.on()
             pin_r.on()
         else:
-            assert False, "something wrong in prediction %r" % s_index
+            print("something wrong in prediction")
+            #assert False, "something wrong in prediction %r" % s_index
 
         # hold for a bit
         sleep(1.0)
         #pin_l.on()
         #pin_r.on()
-    
     
