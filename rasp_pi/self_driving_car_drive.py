@@ -1,15 +1,22 @@
+
+# references:
+# https://media.readthedocs.org/pdf/picamera/pi-display/picamera.pdf
+# https://picamera.readthedocs.io/en/release-1.10/recipes2.html#unencoded-image-capture-rgb-format
+# https://www.raspberrypi.org/forums/viewtopic.php?t=107874
+
+import picamera
+import picamera.array
 from gpiozero import InputDevice
 from gpiozero import OutputDevice
 from picamera import PiCamera
+import keras
+from keras import models
+
+import time
 from time import sleep
 from time import time
 import numpy as np
-import keras
 import os
-from keras import models
-import time
-import picamera
-import picamera.array
 
 print("keras version " + keras.__version__)
 
@@ -32,6 +39,8 @@ pin_l = OutputDevice(pin_left,True,True)
 pin_r = OutputDevice(pin_right,True,True)
 
 with picamera.PiCamera() as camera:
+
+    print("camera preview start")
     camera.resolution = (64, 64)
     camera.rotation = 180
     camera.start_preview()
@@ -39,21 +48,17 @@ with picamera.PiCamera() as camera:
     camera.stop_preview()
     print("camera preview is complete")
 
+    print('CNN model start')
     save_dir = os.path.join(os.getcwd(), '../model/saved_models/')
     model_name = 'metrowest_keras_trained_model.h5'
     model_path = os.path.join(save_dir, model_name)
     model = keras.models.load_model(model_path)
-    print('load of CNN model is complete')
+    print('CNN model load is complete')
 
+    while True:
 
-
-# from https://picamera.readthedocs.io/en/release-1.10/recipes2.html#unencoded-image-capture-rgb-format
-    with picamera.array.PiRGBArray(camera) as stream:
-        camera.capture(stream, 'rgb', resize=(64,64), use_video_port=True)
-        # Show size of RGB data
-        print(stream.array.shape)
-
-        image = stream
+        image = np.empty((64,64,3), dtype=np.uint8)
+        camera.capture(image, 'rgb', resize=(64,64), use_video_port=True)
 
         # the CNN expects (was trained using) an array of float32 normalized images
         image = image.astype('float32')
@@ -82,7 +87,7 @@ with picamera.PiCamera() as camera:
             assert False, "something wrong in prediction %r" % s_index
 
         # hold for a bit
-        sleep(0.2)
+        sleep(1.0)
         #pin_l.on()
         #pin_r.on()
     
