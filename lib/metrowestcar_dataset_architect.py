@@ -87,28 +87,28 @@ class DatasetArchitect(object):
             
         self.my_dataset['DESCR'] = """
 
-                The dataset is images and steering from a toy
+                The dataset is a collection of images and steering from a toy
                 car as it is driven around a track.
                 
-                The images are the track which is a
-                piece of tape on a concrete floor.
-
-                Images are square, size 64x64 using RGB encoding.
-                This is kept as a 4-dimensional numpy array of numpy.uint8
-                The dimensions of this array are [N][64][64][3]
-                The first dimension is image number
-                The next two dimensions are height, width
-                the final dimension is color.
-
-                The steering values are the steering applied by the driver
-                to keep the car on the track.
-
-                Steering values are "categorical" with 1=left, 3=straight 2=right.
-                The data is kept as a 1-dimensional numpy array of numpy.uint8
-                The array is size <N> which is the direction the car is
-                being steered at the time of the correspondingly-numbered image.
+                The track is set up on a concrete floor. A piece of tape defines
+                the centerline and the car will be trained to follow this line.
+                During training the steering values applied by the driver to
+                keep the car on the track are captured.
+                                
+                The dataset is split into training and test subsets
+                of size 2582 and 646 respectively.
                 
-                The dataset is split into <N> training <M> test subsets
+                Images are square, size 64x64 using RGB encoding.
+                This is kept as a 4-dimensional numpy array of numpy.uint8.
+                The dimensions of this array are [N][64][64][3].
+                The first dimension is image number.
+                The next two dimensions are height, width.
+                The final dimension is color.
+
+                Steering values are categorical with 1=left, 3=straight 2=right.
+                The data is kept as a 1-dimensional numpy array of numpy.uint8
+                The array is size [N] which is the direction the car is
+                being steered at the time of the correspondingly-numbered image.
 
                 The structure of the dataset is:
 
