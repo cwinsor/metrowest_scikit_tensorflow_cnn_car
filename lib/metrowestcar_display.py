@@ -20,11 +20,17 @@ class Displayer():
     
     def display_thumbnail(self, image_as_numpy_array):
         im = Image.fromarray(np.uint8(image_as_numpy_array))
-        size = 128, 128
+        size = 32, 32
         im.thumbnail(size)
         im.show()
         return
     
+    def display_resized(self, image_as_numpy_array, width, height):
+        im = Image.fromarray(np.uint8(image_as_numpy_array))
+        im = im.resize((width, height), Image.ANTIALIAS)
+        im.show()
+        return   
+        
     def _draw_pointer_on_image(self, draw, im_h, im_w, direction):
         
         # establish 4 points and pointers... format for line sequence is is [(x,y),(x,y)...]
