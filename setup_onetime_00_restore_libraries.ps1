@@ -22,4 +22,4 @@ Get-Command python
 pip list
 
 # get the libraries specified in the requirements.txt file
-#pip install -r requirements.txt
+pip install -r requirements.txt

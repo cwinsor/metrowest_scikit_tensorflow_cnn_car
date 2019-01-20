@@ -4,5 +4,8 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.pythonPath": "list\\Scripts\\python.exe",
+		"git.ignoreLimitWarning": true
+	}
 }
