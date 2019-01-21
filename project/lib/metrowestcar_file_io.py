@@ -29,8 +29,8 @@ class FileReader(object):
         numpy_image = np.array(image)
         return numpy_image
 
-    def read_image_from_file_using_filenumber(self, dirpath, trackname, filenumber):
-        filename = trackname + "_" + str(filenumber) + '.jpg'     
+    def read_image_from_file_using_samplenumber(self, dirpath, trackname, samplenumber):
+        filename = trackname + "_" + str(samplenumber) + '.jpg'     
         numpy_image = self.read_image_from_file(dirpath, trackname, filename)
         return numpy_image
     
@@ -44,8 +44,8 @@ class FileReader(object):
             assert (value > 0) & (value < 800), "the steering value is invalid (" + line + ") --> " + fullpath
             return value
 
-    def read_steering_from_file_using_filenumber(self, dirpath, trackname, filenumber):
-        filename = trackname + "_" + str(filenumber) + '.txt'      
+    def read_steering_from_file_using_samplenumber(self, dirpath, trackname, samplenumber):
+        filename = trackname + "_" + str(samplenumber) + '.txt'      
         steering = self.read_steering_from_file(dirpath, trackname, filename)
         return steering
     
@@ -59,7 +59,7 @@ class FileReader(object):
     # The method returns a list of NNNs given a directory.
     import fnmatch
     import re
-    def _get_file_numbers(self, dirpath, trackname):
+    def _get_sample_numbers(self, dirpath, trackname):
         fullpath = dirpath + '\\' + trackname + '\\steer\\'
 
         # get all the file names
@@ -71,21 +71,21 @@ class FileReader(object):
         return names3
 
 
-    def read_images_from_directory_given_list(self, dirpath, trackname, filenumbers):
+    def read_images_from_directory_given_samplenumbers(self, dirpath, trackname, samplenumbers):
         
         # loop through the directories/files
         my_images = np.empty((0,self.image_h,self.image_w, self.image_d), np.uint8)
         
-        for fnum in filenumbers:
-            image = self.read_image_from_file_using_filenumber(dirpath, trackname, fnum)
+        for snum in samplenumbers:
+            image = self.read_image_from_file_using_samplenumber(dirpath, trackname, snum)
             # add one dimension so the image so it can be appended
             image = image[np.newaxis]
             my_images = np.append(my_images, image, axis=0)
         return my_images
 
     def read_images_from_directory(self, dirpath, trackname):
-        filenumbers = self._get_file_numbers(dirpath, trackname)
-        images = self.read_images_from_directory_given_list(dirpath, trackname, filenumbers)
+        samplenumbers = self._get_sample_numbers(dirpath, trackname)
+        images = self.read_images_from_directory_given_samplenumbers(dirpath, trackname, samplenumbers)
         return images
     
     def read_images_from_list_of_tracks(self, dirpath, tracklist):
@@ -98,19 +98,19 @@ class FileReader(object):
             images = np.append(images, more_images, axis=0)
         return images
     
-    def read_steerings_from_directory_given_list(self, dirpath, trackname, filenumbers):
+    def read_steerings_from_directory_given_samplenumbers(self, dirpath, trackname, samplenumbers):
         
         # loop through the directories/files
         my_steering = np.empty((0),np.uint8)
         
-        for fnum in filenumbers:
-            steering = self.read_steering_from_file_using_filenumber(dirpath, trackname, fnum) 
+        for snum in samplenumbers:
+            steering = self.read_steering_from_file_using_samplenumber(dirpath, trackname, snum) 
             my_steering = np.append(my_steering, steering)
         return my_steering
 
     def read_steerings_from_directory(self, dirpath, trackname):
-        filenumbers = self._get_file_numbers(dirpath, trackname)
-        steerings = self.read_steerings_from_directory_given_list(dirpath, trackname, filenumbers)
+        samplenumbers = self._get_sample_numbers(dirpath, trackname)
+        steerings = self.read_steerings_from_directory_given_samplenumbers(dirpath, trackname, samplenumbers)
         return steerings
         
     def read_steerings_from_list_of_tracks(self, dirpath, tracklist):
