@@ -23,37 +23,30 @@ class FileReader(object):
             
     # read an image from file
     # image is read and converted to numpy array
-    def read_image_from_file(self, full_path):
-        image = Image.open(full_path)
+    def read_image_from_file(self, dirpath, trackname, filename):
+        fullpath = dirpath + '\\' + trackname + '\\image\\' + filename
+        image = Image.open(fullpath)
         numpy_image = np.array(image)
         return numpy_image
 
-    def read_image_from_file_using_filenumber(self, dir_path, file_number):
-        filename = os.path.join('image' + str(file_number) + '.jpg')
-        full_path = os.path.join(dir_path, filename)        
-        numpy_image = self.read_image_from_file(full_path)
+    def read_image_from_file_using_filenumber(self, dirpath, trackname, filenumber):
+        filename = trackname + "_" + str(filenumber) + '.jpg'     
+        numpy_image = self.read_image_from_file(dirpath, trackname, filename)
         return numpy_image
     
     # read steering value from file
     # it is received as two bits and is low asserted!
-    def read_steering_from_file(self, full_path):
-        with open(full_path, 'rt') as file:
+    def read_steering_from_file(self, dirpath, trackname, filename):
+        fullpath = dirpath + '\\' + trackname + '\\steer\\' + filename
+        with open(fullpath, 'rt') as file:
             line = file.read()
-            if line == "01":
-                steering = np.uint8(1)
-            elif line == "11":
-                steering = np.uint8(3)
-            elif line == "10":
-                steering = np.uint8(2)
-            else:
-                sys.exit("error - steering data value of " + line + " is unexpected/invalid" + "file=" + full_path)
-        return steering
+            value = np.uint8(line)
+            assert (value > 0) & (value < 800), "the steering value is invalid (" + line + ") --> " + fullpath
+            return value
 
-
-    def read_steering_from_file_using_filenumber(self, dir_path, file_number):
-        filename = os.path.join('control' + str(file_number))
-        full_path = os.path.join(dir_path, filename)        
-        steering = self.read_steering_from_file(full_path)
+    def read_steering_from_file_using_filenumber(self, dirpath, trackname, filenumber):
+        filename = trackname + "_" + str(filenumber) + '.txt'      
+        steering = self.read_steering_from_file(dirpath, trackname, filename)
         return steering
     
     
@@ -61,78 +54,72 @@ class FileReader(object):
     #
     # Each image is paired with it's steering value
     # via a number in the file names:
-    #    steeringNNN.txt
-    #    imageNNN.jpg
+    #    <track>/image/<track>_<NN>.jpg
+    #    <track>/steer/<track>_<NN>.txt
     # The method returns a list of NNNs given a directory.
     import fnmatch
     import re
-    def _get_file_numbers(self, fullpath):
-        ### snipped ->  fullpath = os.path.join(basedir, subdir)
+    def _get_file_numbers(self, dirpath, trackname):
+        fullpath = dirpath + '\\' + trackname + '\\steer\\'
+
         # get all the file names
-        names = os.listdir(fullpath)
-        # filter to get a list of just the "steering" files
-        bar = fnmatch.filter(names, "control*")
-        # use regular expression to get just the NNN part of the name
-        m = [re.search('\d+', b).group(0) for b in bar]
-        # convert to integer from string
-        m = [ int(x) for x in m ]
+        names1 = os.listdir(fullpath)
+
+        # crop everything before _ and after .
+        names2 = [n.split("_", 1)[1] for n in names1]
+        names3 = [n.split(".", 1)[0] for n in names2]
+        return names3
+
+
+    def read_images_from_directory_given_list(self, dirpath, trackname, filenumbers):
         
-        self.list_of_file_numbers = m
-        return m
-
-
-    def read_images_from_directory_given_list(self, dir_path, list_of_file_numbers):
-
-         # loop through the directories/files
+        # loop through the directories/files
         my_images = np.empty((0,self.image_h,self.image_w, self.image_d), np.uint8)
         
-        for fnum in list_of_file_numbers:
-            image = self.read_image_from_file_using_filenumber(dir_path, fnum)
+        for fnum in filenumbers:
+            image = self.read_image_from_file_using_filenumber(dirpath, trackname, fnum)
             # add one dimension so the image so it can be appended
             image = image[np.newaxis]
             my_images = np.append(my_images, image, axis=0)
         return my_images
 
-
-    def read_images_from_directory(self, dir_path):
-        list_of_file_numbers = self._get_file_numbers(dir_path)
-        images = self.read_images_from_directory_given_list(dir_path, list_of_file_numbers)
+    def read_images_from_directory(self, dirpath, trackname):
+        filenumbers = self._get_file_numbers(dirpath, trackname)
+        images = self.read_images_from_directory_given_list(dirpath, trackname, filenumbers)
         return images
-        
-        
-    def read_images_from_list_of_directories(self, dir_list):
+    
+    def read_images_from_list_of_tracks(self, dirpath, tracklist):
 
         images = np.empty((0,self.image_h,self.image_w, self.image_d), np.uint8)
-        # loop through the directories
-        for dir_path in dir_list:
-            print('loading images from ' + dir_path)
-            more_images = self.read_images_from_directory(dir_path)
+        # loop through the tracks
+        for trackname in tracklist:
+            print('loading images from ' + dirpath + "\\" + trackname)
+            more_images = self.read_images_from_directory(dirpath, trackname)
             images = np.append(images, more_images, axis=0)
         return images
-      
-    def read_steering_from_directory_given_list(self, dir_path, list_of_file_numbers):
-
-         # loop through the directories/files
+    
+    def read_steerings_from_directory_given_list(self, dirpath, trackname, filenumbers):
+        
+        # loop through the directories/files
         my_steering = np.empty((0),np.uint8)
         
-        for fnum in list_of_file_numbers:
-            steering = self.read_steering_from_file_using_filenumber(dir_path, fnum) 
+        for fnum in filenumbers:
+            steering = self.read_steering_from_file_using_filenumber(dirpath, trackname, fnum) 
             my_steering = np.append(my_steering, steering)
         return my_steering
 
-    def read_steering_from_directory(self, dir_path):
-        list_of_file_numbers = self._get_file_numbers(dir_path)
-        steering = self.read_steering_from_directory_given_list(dir_path, list_of_file_numbers)
-        return steering
+    def read_steerings_from_directory(self, dirpath, trackname):
+        filenumbers = self._get_file_numbers(dirpath, trackname)
+        steerings = self.read_steerings_from_directory_given_list(dirpath, trackname, filenumbers)
+        return steerings
         
-    def read_steering_from_list_of_directories(self, dir_list):
+    def read_steerings_from_list_of_tracks(self, dirpath, tracklist):
 
         steerings = np.empty((0),np.uint8)
         # loop through the directories
-        for dir_path in dir_list:
-            print('loading steering from ' + dir_path)
-            more_steerings = self.read_steering_from_directory(dir_path)
+        for trackname in tracklist:
+            print('loading steerings from ' + dirpath + "\\" + trackname)
+            more_steerings = self.read_steerings_from_directory(dirpath, trackname)
             steerings = np.append(steerings, more_steerings, axis=0)
         return steerings
 
-      
