@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"python.pythonPath": "list\\Scripts\\python.exe",
+		"python.pythonPath": "pymote_env\\Scripts\\python.exe",
 		"git.ignoreLimitWarning": true
 	}
 }
