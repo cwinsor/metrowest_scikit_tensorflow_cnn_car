@@ -106,7 +106,7 @@ class DatasetArchitect(object):
                 The final dimension is color.
 
                 Steering values are categorical with 1=left, 3=straight 2=right.
-                The data is kept as a 1-dimensional numpy array of numpy.uint8
+                The data is kept as a 1-dimensional numpy array of numpy.uint32
                 The array is size [N] which is the direction the car is
                 being steered at the time of the correspondingly-numbered image.
 

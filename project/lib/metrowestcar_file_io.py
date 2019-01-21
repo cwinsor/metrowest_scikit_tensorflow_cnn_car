@@ -40,8 +40,8 @@ class FileReader(object):
         fullpath = dirpath + '\\' + trackname + '\\steer\\' + filename
         with open(fullpath, 'rt') as file:
             line = file.read()
-            value = np.uint8(line)
-            assert (value > 0) & (value < 800), "the steering value is invalid (" + line + ") --> " + fullpath
+            value = np.uint32(line)
+            assert (value > 0) & (value < 800), "the steering value is invalid (" + line + "),(" + str(value) + ") --> " + fullpath
             return value
 
     def read_steering_from_file_using_samplenumber(self, dirpath, trackname, samplenumber):
@@ -101,7 +101,7 @@ class FileReader(object):
     def read_steerings_from_directory_given_samplenumbers(self, dirpath, trackname, samplenumbers):
         
         # loop through the directories/files
-        my_steering = np.empty((0),np.uint8)
+        my_steering = np.empty((0),np.uint32)
         
         for snum in samplenumbers:
             steering = self.read_steering_from_file_using_samplenumber(dirpath, trackname, snum) 
@@ -115,7 +115,7 @@ class FileReader(object):
         
     def read_steerings_from_list_of_tracks(self, dirpath, tracklist):
 
-        steerings = np.empty((0),np.uint8)
+        steerings = np.empty((0),np.uint32)
         # loop through the directories
         for trackname in tracklist:
             print('loading steerings from ' + dirpath + "\\" + trackname)
