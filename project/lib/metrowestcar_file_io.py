@@ -64,10 +64,11 @@ class FileReader(object):
 
         # get all the file names
         names1 = os.listdir(fullpath)
+        
+        # crop everything after "." then take whatever follows "_"
+        names2 = [n.split(".", 1)[0] for n in names1]
+        names3 = [n.split("_")[-1] for n in names2]
 
-        # crop everything before _ and after .
-        names2 = [n.split("_", 1)[1] for n in names1]
-        names3 = [n.split(".", 1)[0] for n in names2]
         return names3
 
 
