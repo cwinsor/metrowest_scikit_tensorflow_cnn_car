@@ -7,6 +7,51 @@ import numpy as np
 
 class DatasetArchitect(object):
 
+<<<<<<< HEAD
+    image_h = 0
+    image_w = 0
+    image_d = 0
+    
+    def __init__(self, h, w, d):
+        self.image_h = h
+        self.image_w = w
+        self.image_d = d
+               
+    def describe_dataset(self, dataset):
+        print(type(dataset))
+        print(dataset.keys())
+
+        print("(training) image array is    " + str(dataset['images_train'].shape) + " of " + str(type(dataset['images_train'][0][0][0][0])))
+        print("(training) steering array is " + str(dataset['steering_train'].shape) + " of " + str(type(dataset['steering_train'][0])))  
+        print("(test) image array is    " + str(dataset['images_test'].shape) + " of " + str(type(dataset['images_test'][0][0][0][0])))
+        print("(test) steering array is " + str(dataset['steering_test'].shape) + " of " + str(type(dataset['steering_test'][0])))
+        return
+    
+    def read_raw_data_from_files(self, dirpath, tracklist):
+
+        file_reader = FileReader(self.image_h, self.image_w, self.image_d)
+        self.image_array = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
+        steering_array_pre_threshold = file_reader.read_steerings_from_list_of_tracks(dirpath, tracklist)
+
+        # threshold the steering values
+        import my_globals as mygl
+        self.steering_array = np.empty((0),np.uint32)
+
+        count_l = 0
+        count_s = 0
+        count_r = 0
+        for steering_value in steering_array_pre_threshold:
+            if steering_value < mygl.THRESHOLD_LEFT:
+                signal = mygl.SIGNAL_LEFT
+                count_l += 1
+            elif mygl.THRESHOLD_RIGHT < steering_value:
+                signal = mygl.SIGNAL_RIGHT
+                count_r += 1
+            else:
+                signal = mygl.SIGNAL_STRAIGHT
+                count_s += 1
+        self.steering_array = np.append(self.steering_array, signal)
+=======
     
     def describe_dataset(self, dataset):
         print(type(dataset))
@@ -28,15 +73,35 @@ class DatasetArchitect(object):
         file_reader = FileReader(64, 64, 3)
         self.image_array = file_reader.read_images_from_list_of_directories(dir_list)
         self.steering_array = file_reader.read_steering_from_list_of_directories(dir_list)
+>>>>>>> ec9934d88df8540794f96c59b7636ee391f0754d
 
         print('image array:')
         print(type(self.image_array))
         print(self.image_array.shape)
         print(type(self.image_array[0][0][0][0]))
+<<<<<<< HEAD
+        print("")
+
+        print('steering array (pre_threshold):')
+        print(type(steering_array_pre_threshold))
+        print(steering_array_pre_threshold.shape)
+        print(type(steering_array_pre_threshold[0]))
+        print("")
+
+        print('steering array (thresholded):')
+        print(type(self.steering_array))
+        print(self.steering_array.shape)
+        print(type(self.steering_array[0]))
+        print("#left =     " + str(count_l))
+        print("#straight = " + str(count_s))
+        print("#right =    " + str(count_r))
+
+=======
         print('steering array:')
         print(type(self.steering_array))
         print(self.steering_array.shape)
         print(type(self.steering_array[0]))
+>>>>>>> ec9934d88df8540794f96c59b7636ee391f0754d
         return
 
     # reference:
@@ -96,11 +161,19 @@ class DatasetArchitect(object):
                 keep the car on the track are captured.
                                 
                 The dataset is split into training and test subsets
+<<<<<<< HEAD
+                of size ???? and ???? respectively.
+                
+                Images are square, size 90hx180w using RGB encoding.
+                This is kept as a 4-dimensional numpy array of numpy.uint8.
+                The dimensions of this array are [N][90][180][3].
+=======
                 of size 2582 and 646 respectively.
                 
                 Images are square, size 64x64 using RGB encoding.
                 This is kept as a 4-dimensional numpy array of numpy.uint8.
                 The dimensions of this array are [N][64][64][3].
+>>>>>>> ec9934d88df8540794f96c59b7636ee391f0754d
                 The first dimension is image number.
                 The next two dimensions are height, width.
                 The final dimension is color.
