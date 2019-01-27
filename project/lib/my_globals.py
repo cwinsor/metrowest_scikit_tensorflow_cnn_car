@@ -3,7 +3,7 @@ IMAGE_W = 180
 IMAGE_D = 3
 
 THRESHOLD_LEFT = 390
-THRESHOLD_RIGHT = 204
+THRESHOLD_RIGHT = 404
 
 # left/right steering values
 # this reflects the wiring of the controller
