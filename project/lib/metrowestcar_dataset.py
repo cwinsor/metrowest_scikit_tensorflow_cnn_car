@@ -50,7 +50,7 @@ class Dataset(object):
         #(x_train, y_train), (x_test, y_test) = mnist.load_data()
         #return  (x_train, y_train), (x_test, y_test)
     
-        file_full_path = "../data/dataset"
+        file_full_path = "../dataset/dataset_01_full_size_images.pickle"
         with open(file_full_path, 'rb') as data:
             dataset_in = pickle.load(data)
         return dataset_in
