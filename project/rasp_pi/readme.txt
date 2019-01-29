@@ -34,6 +34,13 @@ extra-index-url=https://www.piwheels.org/simple
 
 and then run the pip3 install command.
 
+for tensorflow - also need the following:
+from  https://www.raspberrypi.org/magpi/tensorflow-ai-raspberry-pi/
+sudo pip3 install --upgrade pip
+sudo pip3 install --upgrade pip3
+sudo pip3 install --upgrade piwheels
+sudo pip3 install --upgrade tensorflow
+
 Test your Tensorflow installation by
 python -c 'import tensorflow as tf; print(tf.__version__)'  # for Python 2
 python3 -c 'import tensorflow as tf; print(tf.__version__)'  # for Python 3
