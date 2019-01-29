@@ -22,7 +22,7 @@ if train == True:
     pin_r = InputDevice(pin_right,True)
     
     camera = PiCamera()
-    camera.resolution = (640, 480)
+    camera.resolution = (180, 90)
     camera.framerate = 24
     camera.rotation = 180
     camera.raw_format='rgb'

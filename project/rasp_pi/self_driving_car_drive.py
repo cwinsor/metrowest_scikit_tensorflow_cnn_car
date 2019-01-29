@@ -58,7 +58,7 @@ sleep(1.0)
 with picamera.PiCamera() as camera:
 
     print("camera preview start")
-    camera.resolution = (64, 64)
+    camera.resolution = (180, 90)
     camera.rotation = 180
     camera.start_preview()
     sleep(5)
@@ -69,13 +69,26 @@ with picamera.PiCamera() as camera:
     save_dir = os.path.join(os.getcwd(), '../model/saved_models/')
     model_name = 'metrowest_keras_trained_model.h5'
     model_path = os.path.join(save_dir, model_name)
+
+    # close the file if was earlier left open - see https://github.com/h5py/h5py/issues/332
+    # print("model_path=" + str(model_path))
+    # import h5py
+    # f2 = h5py.File(model_path, 'w')
+    # f2.close()
+    # print("write closed")
+    # sleep(1)
+    # f2 = h5py.File(model_path, 'a')
+    # f2.close()
+    # print("all closed")
+    # sleep(1)
+
     model = keras.models.load_model(model_path)
     print('CNN model load is complete')
 
     while True:
 
-        image = np.empty((64,64,3), dtype=np.uint8)
-        camera.capture(image, 'rgb', resize=(64,64), use_video_port=True)
+        image = np.empty((90,180,3), dtype=np.uint8)
+        camera.capture(image, 'rgb', resize=(180,90), use_video_port=True)
 
         # the CNN expects (was trained using) an array of float32 normalized images
         image = image.astype('float32')
