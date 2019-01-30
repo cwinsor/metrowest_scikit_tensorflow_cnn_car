@@ -1,4 +1,7 @@
 
+
+## NEED TO RUN THIS AS ADMIN - VIRTUALENV SEEMS TO REQUIRE ADMIN
+
 # reference:  https://packaging.python.org/guides/installing-using-pip-and-virtualenv/
 
 # confirm at least we have python with pip
@@ -6,6 +9,7 @@ python --version
 python -m pip --version
 
 # add virtualenv if user doesn't have it
+python -m pip uninstall virtualenv
 python -m pip install virtualenv
 python -m virtualenv --version
 # create an empty virtualenv
