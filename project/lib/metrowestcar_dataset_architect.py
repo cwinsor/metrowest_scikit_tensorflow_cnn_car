@@ -7,14 +7,8 @@ import numpy as np
 
 class DatasetArchitect(object):
 
-    image_h = 0
-    image_w = 0
-    image_d = 0
-    
-    def __init__(self, h, w, d):
-        self.image_h = h
-        self.image_w = w
-        self.image_d = d
+    #def __init__(self):
+
                
     def describe_dataset(self, dataset):
         print(type(dataset))
@@ -27,13 +21,13 @@ class DatasetArchitect(object):
         return
     
     def read_raw_data_from_files(self, dirpath, tracklist):
+        import my_globals as mygl
 
-        file_reader = FileReader(self.image_h, self.image_w, self.image_d)
-        self.image_array = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
+        file_reader = FileReader(mygl.IMAGE_RAW_H, mygl.IMAGE_RAW_W, mygl.IMAGE_D)
+        image_array_pre_downsample = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
         steering_array_pre_threshold = file_reader.read_steerings_from_list_of_tracks(dirpath, tracklist)
 
         # threshold the steering values
-        import my_globals as mygl
         self.steering_array = np.empty((0),np.uint32)
 
         count_l = 0
@@ -51,8 +45,17 @@ class DatasetArchitect(object):
                 count_s += 1
             self.steering_array = np.append(self.steering_array, np.uint32(signal))
 
+        # downsample the image
+        self.image_array = image_array_pre_downsample [:, 0::mygl.DOWNSAMPLE_FACTOR, 0::mygl.DOWNSAMPLE_FACTOR]
 
-        print('image array:')
+
+        print('image array (pre-downsample):')
+        print(type(image_array_pre_downsample))
+        print(image_array_pre_downsample.shape)
+        print(type(image_array_pre_downsample[0][0][0][0]))
+        print("")
+
+        print('image array (post-downsample):')
         print(type(self.image_array))
         print(self.image_array.shape)
         print(type(self.image_array[0][0][0][0]))
@@ -106,10 +109,10 @@ class DatasetArchitect(object):
 
     # split 80/20 train/test
     def split_train_test(self):
-        whole = self.steering_array.shape[0]
-        self.cut = int(whole * 0.8)
-        print("whole = ", self.steering_array.shape[0])
-        print("cut   = ", self.cut, " ", whole-self.cut)
+        self.whole = self.steering_array.shape[0]
+        self.cut = int(self.whole * 0.8)
+        print("whole = ", self.whole)
+        print("cut   = ", self.cut, " ", self.whole-self.cut)
         return
 
     def organize_as_dictionary(self):
@@ -121,31 +124,29 @@ class DatasetArchitect(object):
         self.my_dataset['steering_train'] = self.steering_array[:self.cut]
         self.my_dataset['steering_test'] = self.steering_array[self.cut:]
             
-        self.my_dataset['DESCR'] = """
+        self.my_dataset['DESCR'] = f"""
 
                 The dataset is a collection of images and steering from a toy
                 car as it is driven around a track.
                 
-                The track is set up on a concrete floor. A piece of tape defines
-                the centerline and the car will be trained to follow this line.
-                During training the steering values applied by the driver to
-                keep the car on the track are captured.
+                The track is defined as a piece of red tape on a light colored
+                carpet.  The tape is the centerline and the car will be trained
+                to follow this line.
+                During training the car is controlled by an operator. Steering
+                position and images from a front-facing camera are captured.
+                The data is used to train a CNN, where the target class is the
+                steering position, and attributes are the pixel image values.
                                 
-                The dataset is split into training and test subsets
-                of size ???? and ???? respectively.
+                The dataset is {self.whole} samples split into training and test
+                subsets of size {self.cut} and {self.whole-self.cut} respectively.
                 
-                Images are square, size 90hx180w using RGB encoding.
-                This is kept as a 4-dimensional numpy array of numpy.uint8.
-                The dimensions of this array are [N][90][180][3].
-
-                The first dimension is image number.
-                The next two dimensions are height, width.
-                The final dimension is color.
+                Images are {mygl.IMAGE_FINAL_H}(h) by {mygl.IMAGE_FINAL_W}(w) by {IMAGE_D}
+                with the third dimension being numpy.uint8 RGB encoding.
+                Images are kept is kept in a numpy array - so the image training array
+                is 4-dimensionalal {self.cut}x{mygl.IMAGE_FINAL_H}x{mygl.IMAGE_FINAL_W}x{IMAGE_D}
 
                 Steering values are categorical with 1=left, 3=straight 2=right.
-                The data is kept as a 1-dimensional numpy array of numpy.uint32
-                The array is size [N] which is the direction the car is
-                being steered at the time of the correspondingly-numbered image.
+                The data is kept as a 1-dimensional numpy array of numpy.uint32.
 
                 The structure of the dataset is:
 
