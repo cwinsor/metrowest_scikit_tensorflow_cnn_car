@@ -2,4 +2,4 @@ tensorflow==1.11.0
 keras==2.2.4
 picamera==1.13
 gpiozero==1.4.1
-
+RPi.GPIO==0.6.5
