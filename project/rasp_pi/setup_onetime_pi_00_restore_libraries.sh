@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 # confirm at least we have python with pip
 python3 --version
