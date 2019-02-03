@@ -25,10 +25,18 @@ pip3 list
 # get the libraries specified in the requirements.txt file
 pip3 install -r requirements.txt
 
+### note hack...
+echo 'hack to get h5py able to be found...i see https://stackoverflow.com/questions/45624116/load-weights-require-h5py'
+sudo apt-get install libhdf5-dev
 
 
 Test your Keras installation by
 ###python -c 'import keras; print(keras.__version__)'# python 2
 python3 -c 'import keras; print(keras.__version__)'  # for Python 3
+
+
+### pi camera...
+sudo pip install picamera
+sudo pip install -U picamera
 
 

@@ -53,12 +53,12 @@ pin_l.on()
 pin_r.on()
 sleep(1.0)
 
-
+import my_globals as mygl
 
 with picamera.PiCamera() as camera:
 
     print("camera preview start")
-    camera.resolution = (180, 90)
+    camera.resolution = (mygl.IMAGE_RAW_W, mygl.IMAGE_RAW_H)
     camera.rotation = 180
     camera.start_preview()
     sleep(5)
@@ -82,14 +82,17 @@ with picamera.PiCamera() as camera:
     # print("all closed")
     # sleep(1)
 
+    print("model_path=" + str(model_path))
     model = keras.models.load_model(model_path)
     print('CNN model load is complete')
 
     while True:
 
-        image = np.empty((90,180,3), dtype=np.uint8)
-        camera.capture(image, 'rgb', resize=(180,90), use_video_port=True)
-
+        image_with_pad = np.empty((mygl.IMAGE_FINAL_H+16,mygl.IMAGE_FINAL_W+16,3), dtype=np.uint8)
+        camera.capture(image_with_pad, 'rgb', resize=(mygl.IMAGE_FINAL_H,mygl.IMAGE_FINAL_W), use_video_port=True)
+        # print(image_with_pad.shape)
+        image = image_with_pad[0:mygl.IMAGE_FINAL_H, 0:mygl.IMAGE_FINAL_W]
+        # print(image.shape)
         # the CNN expects (was trained using) an array of float32 normalized images
         image = image.astype('float32')
         image /= 255
