@@ -1,4 +1,3 @@
 tensorflow==1.11.0
-
-keras
-
+keras==2.2.4
+picamera==1.13
