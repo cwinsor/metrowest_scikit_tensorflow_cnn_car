@@ -9,7 +9,7 @@ python --version
 python -m pip --version
 
 # add virtualenv if user doesn't have it
-python -m pip uninstall virtualenv
+#python -m pip uninstall virtualenv
 python -m pip install virtualenv
 python -m virtualenv --version
 # create an empty virtualenv
