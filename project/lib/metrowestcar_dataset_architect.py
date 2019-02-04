@@ -3,7 +3,7 @@ from keras.datasets import mnist
 from metrowestcar_file_io import FileReader
 
 import numpy as np
-
+import my_globals as mygl
 
 class DatasetArchitect(object):
 
@@ -21,10 +21,10 @@ class DatasetArchitect(object):
         return
     
     def read_raw_data_from_files(self, dirpath, tracklist):
-        import my_globals as mygl
+
 
         file_reader = FileReader(mygl.IMAGE_RAW_H, mygl.IMAGE_RAW_W, mygl.IMAGE_D)
-        image_array_pre_downsample = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
+        self.image_array = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
         steering_array_pre_threshold = file_reader.read_steerings_from_list_of_tracks(dirpath, tracklist)
 
         # threshold the steering values
@@ -45,17 +45,7 @@ class DatasetArchitect(object):
                 count_s += 1
             self.steering_array = np.append(self.steering_array, np.uint32(signal))
 
-        # downsample the image
-        self.image_array = image_array_pre_downsample [:, 0::mygl.DOWNSAMPLE_FACTOR, 0::mygl.DOWNSAMPLE_FACTOR]
-
-
-        print('image array (pre-downsample):')
-        print(type(image_array_pre_downsample))
-        print(image_array_pre_downsample.shape)
-        print(type(image_array_pre_downsample[0][0][0][0]))
-        print("")
-
-        print('image array (post-downsample):')
+        print('image array:')
         print(type(self.image_array))
         print(self.image_array.shape)
         print(type(self.image_array[0][0][0][0]))
@@ -140,10 +130,10 @@ class DatasetArchitect(object):
                 The dataset is {self.whole} samples split into training and test
                 subsets of size {self.cut} and {self.whole-self.cut} respectively.
                 
-                Images are {mygl.IMAGE_FINAL_H}(h) by {mygl.IMAGE_FINAL_W}(w) by {IMAGE_D}
+                Images are {mygl.IMAGE_RAW_H}(h) by {mygl.IMAGE_RAW_W}(w) by {mygl.IMAGE_D}
                 with the third dimension being numpy.uint8 RGB encoding.
                 Images are kept is kept in a numpy array - so the image training array
-                is 4-dimensionalal {self.cut}x{mygl.IMAGE_FINAL_H}x{mygl.IMAGE_FINAL_W}x{IMAGE_D}
+                is 4-dimensionalal {self.cut}x{mygl.IMAGE_RAW_H}x{mygl.IMAGE_RAW_W}x{mygl.IMAGE_D}
 
                 Steering values are categorical with 1=left, 3=straight 2=right.
                 The data is kept as a 1-dimensional numpy array of numpy.uint32.
