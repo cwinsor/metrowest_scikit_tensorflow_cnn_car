@@ -6,6 +6,7 @@ from time import time
 import numpy as np
 from datetime import datetime
 import os
+import my_globals as mygl
 
 # Self-driving car for Metrowest Machine Learning Group.
 #
@@ -29,7 +30,7 @@ pin_l = InputDevice(pin_left,True)
 pin_r = InputDevice(pin_right,True)
 
 camera = PiCamera()
-camera.resolution = (64, 64)
+camera.resolution = (mygl.CAMERA_W, mygl.CAMERA_H)
 #  camera.framerate = 24
 camera.rotation = 180
 #  camera.raw_format='rgb'
@@ -50,7 +51,8 @@ while True:
 	fb.write(pinvals) 
 	fb.close()
 
-	camera.capture(savepath + '/image%s.jpg' % i, resize=(64, 64), use_video_port=True)
+	# camera.capture(savepath + '/image%s.jpg' % i, resize=(64, 64), use_video_port=True)
+	camera.capture(savepath + '/image%s.jpg' % i, use_video_port=True)
 
 	i = i + 1
 

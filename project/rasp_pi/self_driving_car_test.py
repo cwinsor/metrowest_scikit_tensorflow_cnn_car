@@ -16,13 +16,15 @@ train = True
 pin_left  = 26
 pin_right = 13
 
+import my_globals as mygl
+
 if train == True:
     
     pin_l = InputDevice(pin_left,True)
     pin_r = InputDevice(pin_right,True)
     
     camera = PiCamera()
-    camera.resolution = (180, 90)
+    camera.resolution = (mygl.IMAGE_RAW_W, mygl.IMAGE_RAW_H)
     camera.framerate = 24
     camera.rotation = 180
     camera.raw_format='rgb'

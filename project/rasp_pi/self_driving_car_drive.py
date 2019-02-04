@@ -17,6 +17,7 @@ from time import sleep
 from time import time
 import numpy as np
 import os
+import my_globals as mygl
 
 print("keras version " + keras.__version__)
 
@@ -53,12 +54,13 @@ pin_l.on()
 pin_r.on()
 sleep(1.0)
 
-import my_globals as mygl
+i = 0
+from PIL import Image
 
 with picamera.PiCamera() as camera:
 
     print("camera preview start")
-    camera.resolution = (mygl.IMAGE_RAW_W, mygl.IMAGE_RAW_H)
+    camera.resolution = (mygl.CAMERA_W, mygl.CAMERA_H)
     camera.rotation = 180
     camera.start_preview()
     sleep(5)
@@ -85,14 +87,23 @@ with picamera.PiCamera() as camera:
     print("model_path=" + str(model_path))
     model = keras.models.load_model(model_path)
     print('CNN model load is complete')
+    i = 0
 
     while True:
 
-        image_with_pad = np.empty((mygl.IMAGE_FINAL_H+16,mygl.IMAGE_FINAL_W+16,3), dtype=np.uint8)
-        camera.capture(image_with_pad, 'rgb', resize=(mygl.IMAGE_FINAL_H,mygl.IMAGE_FINAL_W), use_video_port=True)
-        # print(image_with_pad.shape)
-        image = image_with_pad[0:mygl.IMAGE_FINAL_H, 0:mygl.IMAGE_FINAL_W]
-        # print(image.shape)
+        image_with_pad = np.empty((mygl.CAMERA_H, mygl.CAMERA_W, 3), dtype=np.uint8)
+        camera.capture(image_with_pad, 'rgb', use_video_port=True)
+
+        image = image_with_pad[0:mygl.IMAGE_RAW_H, 0:mygl.IMAGE_RAW_W]
+
+        im = Image.fromarray(image_with_pad, mode='RGB')
+        im.save('/home/pi/tempdir/image_with_pad_' + str(i) + '.jpeg')
+        im = Image.fromarray(image, mode='RGB')
+        im.save('/home/pi/tempdir/image_' + str(i) + '.jpeg')
+        i += 1
+
+        print(image_with_pad.shape)
+        print(image.shape)
         # the CNN expects (was trained using) an array of float32 normalized images
         image = image.astype('float32')
         image /= 255
