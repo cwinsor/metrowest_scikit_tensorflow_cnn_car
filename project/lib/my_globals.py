@@ -1,11 +1,21 @@
+# the original geneostrat images are this size
 IMAGE_RAW_H = 90
 IMAGE_RAW_W = 180
 IMAGE_D = 3
 
-CAMERA_H = 96
-CAMERA_W = 192
+# at runtime on the PI we specify the camera to capture images this size
+CAMERA_H = 32
+CAMERA_W = 64
 
+# during preprocessing we downsample raw data by FACTOR
+# to get images of size CAMERA
+DOWNSAMPLE_FACTOR_H = 2
+DOWNSAMPLE_FACTOR_W = 2
 
+# left/right steering thresholds
+# the original geneostrat data has a target class that is numeric
+# we need to convert that to nominal (3 values).  The following
+# are the thresholds to do that
 THRESHOLD_LEFT = 390
 THRESHOLD_RIGHT = 404
 

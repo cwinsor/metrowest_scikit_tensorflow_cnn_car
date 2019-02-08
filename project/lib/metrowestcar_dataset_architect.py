@@ -24,7 +24,7 @@ class DatasetArchitect(object):
 
 
         file_reader = FileReader(mygl.IMAGE_RAW_H, mygl.IMAGE_RAW_W, mygl.IMAGE_D)
-        self.image_array = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
+        image_array_pre_downsample = file_reader.read_images_from_list_of_tracks(dirpath, tracklist)
         steering_array_pre_threshold = file_reader.read_steerings_from_list_of_tracks(dirpath, tracklist)
 
         # threshold the steering values
@@ -45,7 +45,16 @@ class DatasetArchitect(object):
                 count_s += 1
             self.steering_array = np.append(self.steering_array, np.uint32(signal))
 
-        print('image array:')
+        # downsample the image
+        self.image_array = image_array_pre_downsample [:, 0::mygl.DOWNSAMPLE_FACTOR_H, 0::mygl.DOWNSAMPLE_FACTOR_W]
+
+        print('image array (pre-downsample):')
+        print(type(image_array_pre_downsample))
+        print(image_array_pre_downsample.shape)
+        print(type(image_array_pre_downsample[0][0][0][0]))
+        print("")
+
+        print('image array (post-downsample):')
         print(type(self.image_array))
         print(self.image_array.shape)
         print(type(self.image_array[0][0][0][0]))
