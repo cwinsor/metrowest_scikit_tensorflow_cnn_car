@@ -17,6 +17,7 @@ from time import sleep
 from time import time
 import numpy as np
 import os
+import math
 import my_globals as mygl
 
 print("keras version " + keras.__version__)
@@ -59,8 +60,17 @@ from PIL import Image
 
 with picamera.PiCamera() as camera:
 
+    # the camera rounds up to the next even multiple of 16 or 32 (height, width respectively)
+    # so... pad upward, capture the larger image.  Later we will downsample 
+    # see example media.readthedocs.org/pdf/picamera/latest/picamera.pdf 4.1
+    CAM_HEIGHT =  (math.floor( (mygl.CAMERA_H - 1) / 16) + 1) * 16
+    CAM_WIDTH  =  (math.floor( (mygl.CAMERA_W - 1) / 32) + 1) * 32
+
+    #print(" CAMERA_H " + str(mygl.CAMERA_H) + " CAM_HEIGHT " + str(CAM_HEIGHT))
+    #print(" CAMERA_W " + str(mygl.CAMERA_W) + " CAM_WIDTH  " + str(CAM_WIDTH))
+
     print("camera preview start")
-    camera.resolution = (mygl.CAMERA_W, mygl.CAMERA_H)
+    camera.resolution = (CAM_WIDTH, CAM_HEIGHT)
     camera.rotation = 180
     camera.start_preview()
     sleep(5)
@@ -87,23 +97,28 @@ with picamera.PiCamera() as camera:
     print("model_path=" + str(model_path))
     model = keras.models.load_model(model_path)
     print('CNN model load is complete')
-    i = 0
 
+    i = 0
     while True:
 
-        image_with_pad = np.empty((mygl.CAMERA_H, mygl.CAMERA_W, 3), dtype=np.uint8)
-        camera.capture(image_with_pad, 'rgb', use_video_port=True)
+        image = np.empty((CAM_HEIGHT, CAM_WIDTH, 3), dtype=np.uint8)
+        #camera.capture(image, 'rgb', use_video_port=True)
+        camera.capture(image, 'rgb')
 
-        image = image_with_pad[0:mygl.IMAGE_RAW_H, 0:mygl.IMAGE_RAW_W]
+        #im = Image.fromarray(image, mode='RGB')
+        #im.save('/home/pi/tempdir/image_' + str(i) + '_0.jpeg')
 
-        im = Image.fromarray(image_with_pad, mode='RGB')
-        im.save('/home/pi/tempdir/image_with_pad_' + str(i) + '.jpeg')
-        im = Image.fromarray(image, mode='RGB')
-        im.save('/home/pi/tempdir/image_' + str(i) + '.jpeg')
-        i += 1
+        image = image.reshape(CAM_HEIGHT, CAM_WIDTH, 3)   # necessary?
 
-        print(image_with_pad.shape)
-        print(image.shape)
+        #im = Image.fromarray(image, mode='RGB')
+        #im.save('/home/pi/tempdir/image_' + str(i) + '_1.jpeg')
+
+        image = image[0:mygl.CAMERA_H, 0:mygl.CAMERA_W, : ]  # here we should scale, not crop
+
+        #im = Image.fromarray(image, mode='RGB')
+        #im.save('/home/pi/tempdir/image_' + str(i) + '_2.jpeg')
+        #i += 1
+
         # the CNN expects (was trained using) an array of float32 normalized images
         image = image.astype('float32')
         image /= 255
@@ -133,7 +148,7 @@ with picamera.PiCamera() as camera:
             #assert False, "something wrong in prediction %r" % s_index
 
         # hold for a bit
-        sleep(1.0)
+        #sleep(1.0)
         #pin_l.on()
         #pin_r.on()
     
