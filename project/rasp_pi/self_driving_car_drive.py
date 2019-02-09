@@ -78,7 +78,8 @@ with picamera.PiCamera() as camera:
     print("camera preview is complete")
 
     print('CNN model start')
-    save_dir = os.path.join(os.getcwd(), '../model/saved_models/')
+
+    save_dir = os.path.join(os.environ['PROJECT_HOME'], 'project/model/saved_models/')
     model_name = 'metrowest_keras_trained_model.h5'
     model_path = os.path.join(save_dir, model_name)
 
