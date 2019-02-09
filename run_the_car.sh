@@ -2,7 +2,7 @@
 
 # This script can be used to automatically run the car
 # when the Pi boots up. It is intended to be called using
-# a systemd service unit the systemd service files are 
+# a systemd service unit. The systemd service files are 
 # in /etc/systemd/
 #
 # For details on how to set up a systemd service unit refer to 
@@ -13,7 +13,27 @@
 # sudo systemctl start metrowest-car-start-it-running.service
 # sudo systemctl status metrowest-car-start-it-running.service
 # sudo systemctl stop metrowest-car-start-it-running.service
+#
+# THE SYSTEMCMD FILE IS AS FOLLOWS:
+#$ more /etc/systemd/system/metrowest-car-start-it-running.service
+#[Unit]
+#Description=Metrowest Self-driving Car
+#After=network.target
+#
+#[Service]
+#ExecStart=/bin/bash /home/pi/metrowest_scikit_tensorflow_cnn_car/run_the_car.sh
+#WorkingDirectory=/home/pi/metrowest_scikit_tensorflow_cnn_car
+#StandardOutput=inherit
+#StandardError=inherit
+#User=pi
+#
+#[Install]
+#WantedBy=multi-user.target
 
+
+
+##############################################
+# THE FOLLOWING IS THE SCRIPT
 
 export PROJECT_HOME="/home/pi/metrowest_scikit_tensorflow_cnn_car"
 
