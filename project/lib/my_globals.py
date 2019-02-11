@@ -3,14 +3,14 @@ IMAGE_RAW_H = 90
 IMAGE_RAW_W = 180
 IMAGE_D = 3
 
-# at runtime on the PI we specify the camera to capture images this size
-CAMERA_H = 32
-CAMERA_W = 64
-
 # during preprocessing we downsample raw data by FACTOR
 # to get images of size CAMERA
 DOWNSAMPLE_FACTOR_H = 2
 DOWNSAMPLE_FACTOR_W = 2
+
+# at runtime on the PI we specify the camera to capture images this size
+CAMERA_H = 45
+CAMERA_W = 90
 
 # left/right steering thresholds
 # the original geneostrat data has a target class that is numeric
