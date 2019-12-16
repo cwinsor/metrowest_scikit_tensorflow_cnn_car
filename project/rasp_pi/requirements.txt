@@ -1,4 +1,4 @@
-tensorflow==1.11.0
+tensorflow==1.15.0
 Keras==2.2.4
 picamera==1.13
 gpiozero==1.4.1
